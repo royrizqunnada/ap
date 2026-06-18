@@ -51,6 +51,12 @@ const ARAHAN_NADA = {
     "Nada TEGAS: tonjolkan kritik, risiko, dan peringatan secara lugas namun tetap sopan dan resmi.",
 };
 
+const ARAHAN_PANJANG = {
+  Singkat: "Panjang SINGKAT: padat, 3-4 poin inti saja, langsung ke pokok.",
+  Sedang: "Panjang SEDANG: 4-6 poin dengan penjelasan secukupnya.",
+  Lengkap: "Panjang LENGKAP: uraian lebih rinci tiap poin, tetap efisien dan tidak bertele-tele.",
+};
+
 const SISTEM_DRAF = `Anda asisten yang menyusun draf MASUKAN/PENDAPAT DINAS untuk disampaikan kepada pimpinan melalui WhatsApp.
 
 Gunakan FORMAT WHATSAPP:
@@ -125,6 +131,7 @@ app.post("/api/draf", async (req, res) => {
   const dari = String(req.body?.dari || "").trim();
   const kepada = String(req.body?.kepada || "").trim();
   const ketegasan = String(req.body?.ketegasan || "Seimbang").trim();
+  const panjang = String(req.body?.panjang || "Sedang").trim();
   const fokus = Array.isArray(req.body?.fokus)
     ? req.body.fokus.map((f) => String(f).trim()).filter(Boolean)
     : [];
@@ -134,6 +141,7 @@ app.post("/api/draf", async (req, res) => {
   }
 
   const arahanNada = ARAHAN_NADA[ketegasan] || ARAHAN_NADA.Seimbang;
+  const arahanPanjang = ARAHAN_PANJANG[panjang] || ARAHAN_PANJANG.Sedang;
   const daftarFokus = fokus.length
     ? fokus.map((f) => `- ${f}`).join("\n")
     : "(tentukan sendiri fokus paling relevan dari bahan)";
@@ -143,6 +151,7 @@ app.post("/api/draf", async (req, res) => {
     `DARI: ${dari || "(tidak disebutkan)"}`,
     `KEPADA: ${kepada || "(tidak disebutkan)"}`,
     arahanNada,
+    arahanPanjang,
     ``,
     `FOKUS KRITIK YANG DIPILIH:`,
     daftarFokus,
