@@ -1,0 +1,185 @@
+<!DOCTYPE html>
+<html lang="id">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Claude Chat</title>
+    <style>
+      :root {
+        --bg: #0f1115;
+        --panel: #171a21;
+        --border: #262b34;
+        --text: #e6e8eb;
+        --muted: #9aa3af;
+        --user: #2563eb;
+        --accent: #c2643a;
+      }
+      * { box-sizing: border-box; }
+      html, body { height: 100%; margin: 0; }
+      body {
+        background: var(--bg);
+        color: var(--text);
+        font-family: system-ui, -apple-system, Segoe UI, Roboto, sans-serif;
+        display: flex;
+        flex-direction: column;
+        height: 100vh;
+      }
+      header {
+        padding: 14px 18px;
+        border-bottom: 1px solid var(--border);
+        font-weight: 600;
+        display: flex;
+        align-items: center;
+        gap: 8px;
+      }
+      header .dot {
+        width: 9px; height: 9px; border-radius: 50%;
+        background: var(--accent);
+      }
+      #chat {
+        flex: 1;
+        overflow-y: auto;
+        padding: 18px;
+        display: flex;
+        flex-direction: column;
+        gap: 14px;
+      }
+      .msg { display: flex; }
+      .msg.user { justify-content: flex-end; }
+      .bubble {
+        max-width: min(720px, 85%);
+        padding: 11px 14px;
+        border-radius: 14px;
+        line-height: 1.5;
+        white-space: pre-wrap;
+        word-wrap: break-word;
+      }
+      .msg.user .bubble { background: var(--user); color: #fff; border-bottom-right-radius: 4px; }
+      .msg.assistant .bubble { background: var(--panel); border: 1px solid var(--border); border-bottom-left-radius: 4px; }
+      .role { font-size: 12px; color: var(--muted); margin-bottom: 4px; }
+      footer {
+        border-top: 1px solid var(--border);
+        padding: 12px;
+        display: flex;
+        gap: 10px;
+      }
+      textarea {
+        flex: 1;
+        resize: none;
+        background: var(--panel);
+        color: var(--text);
+        border: 1px solid var(--border);
+        border-radius: 10px;
+        padding: 11px 12px;
+        font: inherit;
+        max-height: 160px;
+      }
+      button {
+        background: var(--accent);
+        color: #fff;
+        border: none;
+        border-radius: 10px;
+        padding: 0 20px;
+        font: inherit;
+        font-weight: 600;
+        cursor: pointer;
+      }
+      button:disabled { opacity: 0.5; cursor: not-allowed; }
+    </style>
+  </head>
+  <body>
+    <header><span class="dot"></span> Claude Chat</header>
+    <div id="chat"></div>
+    <footer>
+      <textarea id="input" rows="1" placeholder="Tulis pesan… (Enter untuk kirim, Shift+Enter baris baru)"></textarea>
+      <button id="send">Kirim</button>
+    </footer>
+
+    <script>
+      const chat = document.getElementById("chat");
+      const input = document.getElementById("input");
+      const sendBtn = document.getElementById("send");
+      const history = [];
+
+      function addBubble(role, text) {
+        const wrap = document.createElement("div");
+        wrap.className = "msg " + role;
+        const bubble = document.createElement("div");
+        bubble.className = "bubble";
+        const label = document.createElement("div");
+        label.className = "role";
+        label.textContent = role === "user" ? "Anda" : "Claude";
+        const body = document.createElement("span");
+        body.textContent = text;
+        bubble.appendChild(label);
+        bubble.appendChild(body);
+        wrap.appendChild(bubble);
+        chat.appendChild(wrap);
+        chat.scrollTop = chat.scrollHeight;
+        return body;
+      }
+
+      function autoGrow() {
+        input.style.height = "auto";
+        input.style.height = Math.min(input.scrollHeight, 160) + "px";
+      }
+      input.addEventListener("input", autoGrow);
+
+      async function send() {
+        const text = input.value.trim();
+        if (!text) return;
+
+        input.value = "";
+        autoGrow();
+        sendBtn.disabled = true;
+
+        addBubble("user", text);
+        history.push({ role: "user", content: text });
+
+        const out = addBubble("assistant", "");
+        let reply = "";
+
+        try {
+          const res = await fetch("/api/chat", {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({ messages: history }),
+          });
+
+          if (!res.ok || !res.body) {
+            const err = await res.json().catch(() => ({}));
+            out.textContent = "[Error] " + (err.error || res.statusText);
+            sendBtn.disabled = false;
+            return;
+          }
+
+          const reader = res.body.getReader();
+          const decoder = new TextDecoder();
+          while (true) {
+            const { value, done } = await reader.read();
+            if (done) break;
+            reply += decoder.decode(value, { stream: true });
+            out.textContent = reply;
+            chat.scrollTop = chat.scrollHeight;
+          }
+
+          history.push({ role: "assistant", content: reply });
+        } catch (e) {
+          out.textContent = "[Error jaringan] " + e.message;
+        } finally {
+          sendBtn.disabled = false;
+          input.focus();
+        }
+      }
+
+      sendBtn.addEventListener("click", send);
+      input.addEventListener("keydown", (e) => {
+        if (e.key === "Enter" && !e.shiftKey) {
+          e.preventDefault();
+          send();
+        }
+      });
+      input.focus();
+    </script>
+  </body>
+</html>
