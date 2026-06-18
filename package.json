@@ -1,7 +1,7 @@
 {
-  "name": "claude-chat-vps",
+  "name": "penyusun-masukan",
   "version": "1.0.0",
-  "description": "Aplikasi web chat sederhana bertenaga Claude (Anthropic API), siap di-deploy ke VPS.",
+  "description": "Penyusun Masukan untuk Pimpinan — alat bantu dinas berbasis AI (Claude) untuk menyusun draf masukan berformat WhatsApp.",
   "type": "commonjs",
   "main": "server.js",
   "scripts": {

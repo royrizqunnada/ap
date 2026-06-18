@@ -3,183 +3,404 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Claude Chat</title>
+    <title>Penyusun Masukan untuk Pimpinan</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,500;0,700;1,500&display=swap"
+      rel="stylesheet"
+    />
     <style>
       :root {
-        --bg: #0f1115;
-        --panel: #171a21;
-        --border: #262b34;
-        --text: #e6e8eb;
-        --muted: #9aa3af;
-        --user: #2563eb;
-        --accent: #c2643a;
+        --bg: #0a1422;
+        --bg2: #0c1a2b;
+        --card: #0e1c2e;
+        --card2: #112236;
+        --border: #1d3047;
+        --border2: #27405b;
+        --text: #e8ecf1;
+        --muted: #8a99ab;
+        --faint: #61728a;
+        --gold: #d8b878;
+        --gold-soft: #c9a05a;
+        --shadow: 0 18px 50px rgba(0, 0, 0, 0.45);
       }
       * { box-sizing: border-box; }
-      html, body { height: 100%; margin: 0; }
+      html, body { margin: 0; }
       body {
-        background: var(--bg);
+        background:
+          radial-gradient(1200px 600px at 50% -200px, #15273c 0%, transparent 70%),
+          var(--bg);
         color: var(--text);
-        font-family: system-ui, -apple-system, Segoe UI, Roboto, sans-serif;
-        display: flex;
-        flex-direction: column;
-        height: 100vh;
+        font-family: system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
+        line-height: 1.6;
+        min-height: 100vh;
+        padding: 48px 20px 80px;
       }
-      header {
-        padding: 14px 18px;
-        border-bottom: 1px solid var(--border);
-        font-weight: 600;
-        display: flex;
-        align-items: center;
-        gap: 8px;
+      .wrap { max-width: 880px; margin: 0 auto; }
+
+      .serif { font-family: "Playfair Display", Georgia, "Times New Roman", serif; }
+
+      .eyebrow {
+        display: flex; align-items: center; gap: 14px;
+        color: var(--gold-soft);
+        font-size: 12px; font-weight: 600;
+        letter-spacing: 0.28em; text-transform: uppercase;
+        margin-bottom: 18px;
       }
-      header .dot {
-        width: 9px; height: 9px; border-radius: 50%;
-        background: var(--accent);
+      .eyebrow::before {
+        content: ""; width: 38px; height: 2px; background: var(--gold-soft);
       }
-      #chat {
-        flex: 1;
-        overflow-y: auto;
-        padding: 18px;
-        display: flex;
-        flex-direction: column;
-        gap: 14px;
+      h1 {
+        font-weight: 700; font-size: clamp(38px, 6vw, 62px);
+        line-height: 1.05; margin: 0 0 22px;
       }
-      .msg { display: flex; }
-      .msg.user { justify-content: flex-end; }
-      .bubble {
-        max-width: min(720px, 85%);
-        padding: 11px 14px;
-        border-radius: 14px;
-        line-height: 1.5;
-        white-space: pre-wrap;
-        word-wrap: break-word;
-      }
-      .msg.user .bubble { background: var(--user); color: #fff; border-bottom-right-radius: 4px; }
-      .msg.assistant .bubble { background: var(--panel); border: 1px solid var(--border); border-bottom-left-radius: 4px; }
-      .role { font-size: 12px; color: var(--muted); margin-bottom: 4px; }
-      footer {
-        border-top: 1px solid var(--border);
-        padding: 12px;
-        display: flex;
-        gap: 10px;
-      }
-      textarea {
-        flex: 1;
-        resize: none;
-        background: var(--panel);
-        color: var(--text);
+      h1 em { color: var(--gold); font-style: italic; font-weight: 500; }
+      .lead { color: var(--muted); font-size: 18px; max-width: 640px; margin: 0 0 36px; }
+
+      .card {
+        background: linear-gradient(180deg, var(--card) 0%, var(--bg2) 100%);
         border: 1px solid var(--border);
-        border-radius: 10px;
-        padding: 11px 12px;
-        font: inherit;
-        max-height: 160px;
+        border-radius: 18px;
+        padding: 30px 30px 34px;
+        box-shadow: var(--shadow);
+        margin-bottom: 22px;
       }
-      button {
-        background: var(--accent);
-        color: #fff;
-        border: none;
-        border-radius: 10px;
-        padding: 0 20px;
-        font: inherit;
-        font-weight: 600;
-        cursor: pointer;
+      .card-title {
+        font-size: 14px; letter-spacing: 0.22em; text-transform: uppercase;
+        color: var(--muted); font-weight: 600;
+        padding-bottom: 16px; margin-bottom: 24px;
+        border-bottom: 1px solid var(--border);
       }
-      button:disabled { opacity: 0.5; cursor: not-allowed; }
+
+      .field { margin-bottom: 22px; }
+      label.fld {
+        display: block; margin-bottom: 9px; font-size: 15px; font-weight: 600;
+      }
+      label.fld .hint { color: var(--faint); font-weight: 400; }
+
+      input[type="text"], textarea {
+        width: 100%;
+        background: #0a1726;
+        border: 1px solid var(--border2);
+        border-radius: 12px;
+        color: var(--text);
+        font: inherit;
+        padding: 13px 15px;
+        transition: border-color 0.15s, box-shadow 0.15s;
+      }
+      input::placeholder, textarea::placeholder { color: var(--faint); }
+      input:focus, textarea:focus {
+        outline: none; border-color: var(--gold-soft);
+        box-shadow: 0 0 0 3px rgba(216, 184, 120, 0.12);
+      }
+      textarea { resize: vertical; min-height: 150px; line-height: 1.55; }
+
+      .btn-analisis {
+        width: 100%;
+        background: rgba(216, 184, 120, 0.05);
+        border: 1.5px dashed var(--gold-soft);
+        color: var(--gold);
+        font: inherit; font-weight: 700;
+        padding: 16px; border-radius: 12px; cursor: pointer;
+        transition: background 0.15s, opacity 0.15s;
+        margin-bottom: 24px;
+      }
+      .btn-analisis:hover { background: rgba(216, 184, 120, 0.1); }
+      .btn-analisis:disabled { opacity: 0.55; cursor: progress; }
+
+      .fokus-empty { color: var(--faint); font-style: italic; font-size: 14px; margin: 6px 0 14px; }
+      .chips { display: flex; flex-direction: column; gap: 8px; margin-bottom: 14px; }
+      .chip {
+        display: flex; align-items: flex-start; gap: 11px;
+        background: #0a1726; border: 1px solid var(--border2);
+        border-radius: 11px; padding: 11px 13px; cursor: pointer;
+        transition: border-color 0.15s, background 0.15s;
+      }
+      .chip:hover { border-color: var(--gold-soft); }
+      .chip.on { border-color: var(--gold-soft); background: rgba(216, 184, 120, 0.07); }
+      .chip input { margin-top: 3px; accent-color: var(--gold); width: 16px; height: 16px; flex: none; }
+      .chip span { font-size: 14.5px; }
+      .chip .del { margin-left: auto; color: var(--faint); font-size: 18px; line-height: 1; padding: 0 2px; }
+      .chip .del:hover { color: #e88; }
+
+      .add-row { display: flex; gap: 10px; }
+      .add-row input { flex: 1; }
+      .btn-sm {
+        background: var(--card2); border: 1px solid var(--border2);
+        color: var(--text); font: inherit; font-weight: 600;
+        padding: 0 20px; border-radius: 11px; cursor: pointer; white-space: nowrap;
+      }
+      .btn-sm:hover { border-color: var(--gold-soft); }
+
+      .two-col { display: grid; grid-template-columns: 1fr 1fr; gap: 18px; margin-top: 22px; }
+      @media (max-width: 560px) { .two-col { grid-template-columns: 1fr; } }
+
+      .seg {
+        display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; margin-top: 9px;
+      }
+      .seg button {
+        background: #0a1726; border: 1px solid var(--border2); color: var(--muted);
+        font: inherit; font-weight: 600; padding: 15px; border-radius: 12px; cursor: pointer;
+        transition: all 0.15s;
+      }
+      .seg button:hover { border-color: var(--gold-soft); }
+      .seg button.on {
+        background: var(--gold); border-color: var(--gold); color: #2a1e08;
+        box-shadow: 0 6px 18px rgba(216, 184, 120, 0.25);
+      }
+      .seg-desc { margin-top: 12px; font-size: 14px; color: var(--muted); }
+      .seg-desc b { color: var(--text); }
+
+      .btn-susun {
+        width: 100%; background: var(--gold); border: none; color: #2a1e08;
+        font: inherit; font-weight: 700; font-size: 16px;
+        padding: 17px; border-radius: 13px; cursor: pointer;
+        box-shadow: 0 10px 26px rgba(216, 184, 120, 0.25);
+        transition: transform 0.08s, opacity 0.15s;
+      }
+      .btn-susun:hover { transform: translateY(-1px); }
+      .btn-susun:disabled { opacity: 0.55; cursor: progress; transform: none; }
+
+      .out-head { display: flex; align-items: center; justify-content: space-between; margin-bottom: 16px; }
+      .out-head .card-title { margin: 0; padding: 0; border: none; }
+      .btn-salin {
+        background: var(--card2); border: 1px solid var(--border2); color: var(--text);
+        font: inherit; font-weight: 600; padding: 9px 18px; border-radius: 10px; cursor: pointer;
+      }
+      .btn-salin:hover { border-color: var(--gold-soft); }
+      .draft {
+        white-space: pre-wrap; word-wrap: break-word;
+        background: #0a1726; border: 1px solid var(--border2); border-radius: 12px;
+        padding: 20px; min-height: 80px; font-size: 15px; line-height: 1.7;
+      }
+      .draft .ph { color: var(--faint); font-style: italic; }
+      .err { color: #f0a3a3; }
+      #output { display: none; }
+      .hidden { display: none !important; }
     </style>
   </head>
   <body>
-    <header><span class="dot"></span> Claude Chat</header>
-    <div id="chat"></div>
-    <footer>
-      <textarea id="input" rows="1" placeholder="Tulis pesan… (Enter untuk kirim, Shift+Enter baris baru)"></textarea>
-      <button id="send">Kirim</button>
-    </footer>
+    <div class="wrap">
+      <div class="eyebrow">Alat Bantu Dinas</div>
+      <h1 class="serif">Penyusun <em>Masukan</em> untuk Pimpinan</h1>
+      <p class="lead">
+        Diminta pendapat oleh atasan atas sebuah berita, kerja sama, atau kegiatan?
+        Tempel bahannya, biarkan AI mengusulkan fokus kritik yang relevan, lalu salin
+        draf siap-kirim ke WhatsApp.
+      </p>
+
+      <!-- BAHAN & ARAHAN -->
+      <div class="card">
+        <div class="card-title serif">Bahan &amp; Arahan</div>
+
+        <div class="field">
+          <label class="fld">Perihal <span class="hint">— singkat, satu baris</span></label>
+          <input id="perihal" type="text" placeholder="cth. Kerja sama IPOT dalam Kapolda Jateng Cup 2026" />
+        </div>
+
+        <div class="field">
+          <label class="fld">Konteks &amp; bahan <span class="hint">— tempel ringkasan berita, isi link, atau poin penting</span></label>
+          <textarea id="bahan" placeholder="Tempel di sini fakta yang Anda ketahui: apa kegiatannya, siapa yang terlibat, klaim/produk yang disebut, data, dsb. Draf hanya akan memakai fakta dari kolom ini."></textarea>
+        </div>
+
+        <button id="btnAnalisis" class="btn-analisis">Analisis bahan → usulkan fokus</button>
+
+        <div class="field">
+          <label class="fld">Fokus kritik <span class="hint">— usulan AI dari bahan Anda; centang/lepas, atau tambah sendiri</span></label>
+          <div id="fokusEmpty" class="fokus-empty">
+            Belum ada fokus. Klik “Analisis bahan” di atas untuk memunculkan usulan, atau ketik fokus sendiri di bawah.
+          </div>
+          <div id="chips" class="chips"></div>
+          <div class="add-row">
+            <input id="fokusInput" type="text" placeholder="Tambah fokus sendiri, lalu Enter…" />
+            <button id="btnTambah" class="btn-sm">Tambah</button>
+          </div>
+        </div>
+
+        <div class="two-col">
+          <div>
+            <label class="fld">Dari</label>
+            <input id="dari" type="text" value="Kapolres" />
+          </div>
+          <div>
+            <label class="fld">Kepada</label>
+            <input id="kepada" type="text" value="Jenderal (Kapolda)" />
+          </div>
+        </div>
+
+        <div class="field" style="margin-top: 22px; margin-bottom: 0;">
+          <label class="fld">Tingkat ketegasan</label>
+          <div class="seg" id="seg">
+            <button data-val="Apresiatif">Apresiatif</button>
+            <button data-val="Seimbang" class="on">Seimbang</button>
+            <button data-val="Tegas">Tegas</button>
+          </div>
+          <div class="seg-desc" id="segDesc"></div>
+        </div>
+      </div>
+
+      <button id="btnSusun" class="btn-susun">Susun draf masukan</button>
+
+      <!-- OUTPUT -->
+      <div class="card" id="output" style="margin-top: 22px;">
+        <div class="out-head">
+          <div class="card-title serif">Draf Masukan</div>
+          <button id="btnSalin" class="btn-salin">Salin</button>
+        </div>
+        <div id="draft" class="draft"></div>
+      </div>
+    </div>
 
     <script>
-      const chat = document.getElementById("chat");
-      const input = document.getElementById("input");
-      const sendBtn = document.getElementById("send");
-      const history = [];
+      const $ = (id) => document.getElementById(id);
+      const SEG_DESC = {
+        Apresiatif: "<b>Menonjolkan dukungan dan apresiasi.</b> Catatan disampaikan secara halus.",
+        Seimbang: "<b>Dukungan jelas + peringatan tegas.</b> Paling disarankan untuk jalur resmi.",
+        Tegas: "<b>Menonjolkan kritik, risiko, dan peringatan.</b> Lugas namun tetap resmi.",
+      };
 
-      function addBubble(role, text) {
-        const wrap = document.createElement("div");
-        wrap.className = "msg " + role;
-        const bubble = document.createElement("div");
-        bubble.className = "bubble";
-        const label = document.createElement("div");
-        label.className = "role";
-        label.textContent = role === "user" ? "Anda" : "Claude";
-        const body = document.createElement("span");
-        body.textContent = text;
-        bubble.appendChild(label);
-        bubble.appendChild(body);
-        wrap.appendChild(bubble);
-        chat.appendChild(wrap);
-        chat.scrollTop = chat.scrollHeight;
-        return body;
+      let fokus = []; // { text, on }
+      let ketegasan = "Seimbang";
+
+      // --- Tingkat ketegasan ---
+      $("segDesc").innerHTML = SEG_DESC[ketegasan];
+      $("seg").addEventListener("click", (e) => {
+        const b = e.target.closest("button[data-val]");
+        if (!b) return;
+        ketegasan = b.dataset.val;
+        [...$("seg").children].forEach((c) => c.classList.toggle("on", c === b));
+        $("segDesc").innerHTML = SEG_DESC[ketegasan];
+      });
+
+      // --- Render fokus ---
+      function renderFokus() {
+        const box = $("chips");
+        box.innerHTML = "";
+        $("fokusEmpty").style.display = fokus.length ? "none" : "block";
+        fokus.forEach((f, i) => {
+          const row = document.createElement("label");
+          row.className = "chip" + (f.on ? " on" : "");
+          row.innerHTML =
+            '<input type="checkbox" ' + (f.on ? "checked" : "") + " />" +
+            "<span></span>" +
+            '<span class="del" title="Hapus">×</span>';
+          row.querySelector("span").textContent = f.text;
+          row.querySelector('input').addEventListener("change", (e) => {
+            f.on = e.target.checked;
+            row.classList.toggle("on", f.on);
+          });
+          row.querySelector(".del").addEventListener("click", (e) => {
+            e.preventDefault();
+            fokus.splice(i, 1);
+            renderFokus();
+          });
+          box.appendChild(row);
+        });
       }
 
-      function autoGrow() {
-        input.style.height = "auto";
-        input.style.height = Math.min(input.scrollHeight, 160) + "px";
+      function tambahFokus(text) {
+        const t = (text || "").trim();
+        if (!t) return;
+        fokus.push({ text: t, on: true });
+        renderFokus();
       }
-      input.addEventListener("input", autoGrow);
+      $("btnTambah").addEventListener("click", () => {
+        tambahFokus($("fokusInput").value);
+        $("fokusInput").value = "";
+        $("fokusInput").focus();
+      });
+      $("fokusInput").addEventListener("keydown", (e) => {
+        if (e.key === "Enter") { e.preventDefault(); $("btnTambah").click(); }
+      });
 
-      async function send() {
-        const text = input.value.trim();
-        if (!text) return;
-
-        input.value = "";
-        autoGrow();
-        sendBtn.disabled = true;
-
-        addBubble("user", text);
-        history.push({ role: "user", content: text });
-
-        const out = addBubble("assistant", "");
-        let reply = "";
-
+      // --- Analisis bahan -> usulkan fokus ---
+      $("btnAnalisis").addEventListener("click", async () => {
+        const bahan = $("bahan").value.trim();
+        if (!bahan) { alert("Isi dulu kolom “Konteks & bahan”."); return; }
+        const btn = $("btnAnalisis");
+        const label = btn.textContent;
+        btn.disabled = true;
+        btn.textContent = "Menganalisis…";
         try {
-          const res = await fetch("/api/chat", {
+          const r = await fetch("/api/fokus", {
             method: "POST",
             headers: { "Content-Type": "application/json" },
-            body: JSON.stringify({ messages: history }),
+            body: JSON.stringify({ perihal: $("perihal").value, bahan }),
           });
+          const data = await r.json();
+          if (!r.ok) throw new Error(data.error || "Gagal menganalisis.");
+          (data.fokus || []).forEach((t) => fokus.push({ text: t, on: true }));
+          renderFokus();
+        } catch (e) {
+          alert(e.message);
+        } finally {
+          btn.disabled = false;
+          btn.textContent = label;
+        }
+      });
 
-          if (!res.ok || !res.body) {
-            const err = await res.json().catch(() => ({}));
-            out.textContent = "[Error] " + (err.error || res.statusText);
-            sendBtn.disabled = false;
+      // --- Susun draf (streaming) ---
+      $("btnSusun").addEventListener("click", async () => {
+        const bahan = $("bahan").value.trim();
+        if (!bahan) { alert("Isi dulu kolom “Konteks & bahan”."); return; }
+        const btn = $("btnSusun");
+        btn.disabled = true;
+        btn.textContent = "Menyusun draf…";
+        $("output").style.display = "block";
+        const draftEl = $("draft");
+        draftEl.innerHTML = '<span class="ph">Menyusun…</span>';
+        $("output").scrollIntoView({ behavior: "smooth", block: "start" });
+
+        try {
+          const r = await fetch("/api/draf", {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({
+              perihal: $("perihal").value,
+              bahan,
+              dari: $("dari").value,
+              kepada: $("kepada").value,
+              ketegasan,
+              fokus: fokus.filter((f) => f.on).map((f) => f.text),
+            }),
+          });
+          if (!r.ok || !r.body) {
+            const err = await r.json().catch(() => ({}));
+            draftEl.innerHTML = '<span class="err">' + (err.error || "Gagal menyusun draf.") + "</span>";
             return;
           }
-
-          const reader = res.body.getReader();
-          const decoder = new TextDecoder();
+          const reader = r.body.getReader();
+          const dec = new TextDecoder();
+          let text = "";
+          draftEl.textContent = "";
           while (true) {
             const { value, done } = await reader.read();
             if (done) break;
-            reply += decoder.decode(value, { stream: true });
-            out.textContent = reply;
-            chat.scrollTop = chat.scrollHeight;
+            text += dec.decode(value, { stream: true });
+            draftEl.textContent = text;
           }
-
-          history.push({ role: "assistant", content: reply });
         } catch (e) {
-          out.textContent = "[Error jaringan] " + e.message;
+          draftEl.innerHTML = '<span class="err">Kesalahan jaringan: ' + e.message + "</span>";
         } finally {
-          sendBtn.disabled = false;
-          input.focus();
-        }
-      }
-
-      sendBtn.addEventListener("click", send);
-      input.addEventListener("keydown", (e) => {
-        if (e.key === "Enter" && !e.shiftKey) {
-          e.preventDefault();
-          send();
+          btn.disabled = false;
+          btn.textContent = "Susun draf masukan";
         }
       });
-      input.focus();
+
+      // --- Salin ---
+      $("btnSalin").addEventListener("click", async () => {
+        const text = $("draft").textContent;
+        if (!text.trim()) return;
+        try {
+          await navigator.clipboard.writeText(text);
+          const b = $("btnSalin");
+          b.textContent = "Tersalin ✓";
+          setTimeout(() => (b.textContent = "Salin"), 1600);
+        } catch {
+          alert("Gagal menyalin otomatis. Salin manual dari kotak draf.");
+        }
+      });
     </script>
   </body>
 </html>
